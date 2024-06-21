@@ -1,8 +1,10 @@
 import React from 'react'
-
-const Cart = () => {
+import './Cart.css'
+function Cart() {
   return (
-    <div>Cart</div>
+    <div>
+      cart
+    </div>
   )
 }
 

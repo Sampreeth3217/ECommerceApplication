@@ -1,80 +1,70 @@
 import React from 'react'
-import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import './Register.css'
-const Register = () => {
-  let navigate = useNavigate()
-  const { register, handleSubmit, formState: { errors } } = useForm()
-  let [users, setUsers] = useState([{}])
-  async function onSubmit(data) {
-    try {
-      let res = await fetch('http://localhost:4000/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+import {useForm} from 'react-hook-form'
+import {useNavigate} from 'react-router-dom'
+import {useState} from 'react'
 
-      })
-      let result = await res.json()
-      setUsers([...users, result])
-      if (res.status === 201) {
-        navigate("/login")
-      }
-    }catch(err){
-      console.log(err)
+function Register() {
+
+  //error state
+  let [err,setErr]=useState("")
+
+  let {register,handleSubmit,formState:{errors}}=useForm()
+
+  let navigate=useNavigate()
+
+  async function onUserRegister(newUser){
+    try{
+    console.log(newUser)
+    let res=await fetch("https://usersapi-mcsw.onrender.com/users",{
+      method:'POST',
+      headers:{"Content-type":"application/json"},
+      body:JSON.stringify(newUser)
+    })
+    if(res.status===201){
+      navigate('/login')
     }
-    
-    
   }
+  catch(err){
+    console.log(err)
+    setErr(err.message)
+  }
+ }
 
   return (
-    <div className='pt-4' >
-      <h3 className=' text-center '>USER REGISTRATION</h3>
-      <div className="row mx-auto">
+    <div>
+      <h1 className='text-center mt-5'>User Registration Form</h1>
+
+       {/* Display error message */}
+       {err && <p className="text-danger text-center">{err}</p>}
+       
+      <div className="row">
         <div className="col-11 col-sm-10 col-md-6 mx-auto">
-          <form action="" className='' onSubmit={handleSubmit(onSubmit)}>
-            {/* username */}
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <input type="text" className="form-control" id="username"
-                {...register('username', { required: true })} />
-              {errors.username && <span className='text-danger'>Username is required</span>}
-            </div>
-            {/* email */}
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input type="email" className="form-control" id="email"
-                {...register('email', { required: true })} />
-              {errors.email && <span className='text-danger'>Email is required</span>}
-            </div>
-            {/* password */}
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input type="password" className="form-control" id="password"
-                {...register('password', { required: true })} />
-              {errors.password && <span className='text-danger'>Password is required</span>}
-            </div>
-            {/* mobilenumber */}
-            <div className="form-group">
-              <label htmlFor="mobilenumber">Mobile Number</label>
-              <input type="text" className="form-control" id="mobilenumber"
-                {...register('mobilenumber', { required: true })} />
-              {errors.mobilenumber && <span className='text-danger'> Mobile Number is required</span>}
-            </div>
-            {/* profilepicture */}
-            <div className="form-group">
-              <label htmlFor="profilepicture">Profile Picture</label>
-              <input type="text" className="form-control" id="profilepicture"
-                {...register('profilepicture', { required: true })} />
-              {errors.profilepicture && <span className='text-danger'>Profile Picture is required</span>}
-            </div>
-            <button type="submit" className="btn btn-primary">Register</button>
+          <form className='mx-auto mt-5 bg-light shadow-md p-3' onSubmit={handleSubmit(onUserRegister)}>
+            <label htmlFor="" className='form-label'>Username</label>
+             <input type="text" {...register('username',{required:true})} className='form-control mb-3' name="username" id="username" />
+             {errors.username?.type==='required'&& <p className="text-danger">Username is required</p> }
+
+            <label htmlFor="" className='form-label'>Email</label>
+            <input type="email" {...register('email',{required:true})} className='form-control mb-3' name="email" id="email" />
+            {errors.email?.type==='required'&& <p className="text-danger">Email is required</p> }
+
+            <label htmlFor="" className='form-label'>Password</label>
+            <input type="password" {...register('password',{required:true})} className='form-control mb-3' name="password" id="password" />
+            {errors.password?.type==='required'&& <p className="text-danger">Password is required</p> }
+
+            <label htmlFor="" className='form-label'>Mobile</label>
+            <input type="tel" {...register('mobile',{required:true})} className='form-control mb-3' name="mobile" id="mobile"/>
+            {errors.mobile?.type==='required'&& <p className="text-danger">Mobile is required</p> }
+
+            <label htmlFor="" className='form-label'>Paste Img URL</label>
+            <input type="text" {...register('image', { required: true })} className='form-control mb-3' id="url" />
+            {errors.image?.type === 'required' && <p className="text-danger">URL is required</p>}
+
+            <button className="btn btn-info d-block mx-auto" type='submit'>Submit</button>
           </form>
         </div>
       </div>
-
     </div>
   )
 }
